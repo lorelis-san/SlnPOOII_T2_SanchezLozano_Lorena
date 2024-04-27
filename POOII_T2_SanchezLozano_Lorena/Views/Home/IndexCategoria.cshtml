@@ -1,0 +1,38 @@
+﻿@model List<POOII_T2_SanchezLozano_Lorena.Models.Categorium>
+@{
+    ViewData["Title"] = "IndexCategoria";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h5>Lista de Categorías</h5>
+    </div>
+    <div class="card-body">
+        <a class="btn btn-success bt-sm" asp-action="Categoria_Detalle" asp-controller="Home" asp-route-idCategoria="0">Crear Nueva Categoría</a>
+        <hr />
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nombre </th>
+                    <th>Descripción</th>
+                    <th>Fecha de Creación</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.NombreCate</td>
+                        <td>@item.Descripcion</td>
+                        <td>@item.FechaCreacionCat</td>
+                      
+                        <td>
+                            <a class="btn btn-primary btn-sm" asp-action="Categoria_Detalle" asp-controller="Home" asp-route-IdCategoria="@item.IdCategoria">Editar</a>
+                            <a class="btn btn-danger btn-sm" asp-action="Eliminar" asp-controller="Home" asp-route-IdCategoria="@item.IdCategoria">Eliminar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

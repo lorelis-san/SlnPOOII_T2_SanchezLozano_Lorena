@@ -1,0 +1,43 @@
+﻿@model List<POOII_T2_SanchezLozano_Lorena.Models.Producto>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h5>Lista de productos</h5>
+    </div>
+    <div class="card-body">
+        <a class="btn btn-success bt-sm" asp-action="Producto_Detalle" asp-controller="Home" asp-route-idProducto="0">Crear Nuevo</a>
+        <hr />
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nombre </th>
+                    <th>Descripción</th>
+                    <th>Stock</th>
+                    <th>Precio</th>
+                    <th>Categoría</th>
+                    <th>Fecha de Creación</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.NombrePro</td>
+                        <td>@item.DescripcionPro</td>
+                        <td>@item.Stock</td>
+                        <td>@item.Precio</td>
+                        <td>@item.oCategoria.NombreCate</td>
+                        <td>@item.FechaCreacionPro</td>
+                        <td>
+                            <a class="btn btn-primary btn-sm" asp-action="Producto_Detalle" asp-controller="Home" asp-route-IdProducto="@item.IdProducto">Editar</a>
+                            <a class="btn btn-danger btn-sm" asp-action="Eliminar" asp-controller="Home" asp-route-IdProducto="@item.IdProducto">Eliminar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
