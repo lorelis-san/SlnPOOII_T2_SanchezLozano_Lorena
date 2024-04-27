@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-//Variable secret de la conexión a la base de datos
+//Conexión a la base de datos de ambos entornos, producción y desarrollo
 
 builder.Services.AddDbContext<Dbt2Context>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConexionSql")));
 

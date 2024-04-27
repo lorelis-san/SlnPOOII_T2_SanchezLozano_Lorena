@@ -18,6 +18,7 @@ namespace POOII_T2_SanchezLozano_Lorena.Controllers
 
         public IActionResult Index()
         {
+            //Obtiene el listado de los productos y retorna a la vista
             List<Producto> lista = _DBContext.Productos.Include(c => c.oCategoria).ToList();
             return View(lista);
         }
@@ -32,15 +33,19 @@ namespace POOII_T2_SanchezLozano_Lorena.Controllers
         [HttpGet]
         public IActionResult Producto_Detalle(int idProducto)
         {
+            //Instancia de la clase ProductoVM
             ProductoVM oProductoVM = new ProductoVM()
             {
                 oProducto = new Producto(),
+                //Se obtiene la lista de las categorías
                 oListaCategoria = _DBContext.Categorias.Select(categoria => new SelectListItem()
                 {
-                    Text = categoria.Descripcion,
+                    Text = categoria.NombreCate,
                     Value = categoria.IdCategoria.ToString()
                 }).ToList()
             };
+
+            //Si el idProducto es encontrado, será para editar  
             if (idProducto != 0)
             {
                 oProductoVM.oProducto = _DBContext.Productos.Find(idProducto);
@@ -53,6 +58,7 @@ namespace POOII_T2_SanchezLozano_Lorena.Controllers
         [HttpPost]
         public IActionResult Producto_Detalle(ProductoVM oProductoVM)
         {
+            //Si el idProducto que se obtiene desde el ProductoVM no existe, se añade; en cambio, se edita.
             if (oProductoVM.oProducto.IdProducto == 0)
             {
                 _DBContext.Productos.Add(oProductoVM.oProducto);
@@ -63,13 +69,14 @@ namespace POOII_T2_SanchezLozano_Lorena.Controllers
             }
 
             _DBContext.SaveChanges();
-
+            //Se retorna a la vista de listado
             return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
         public IActionResult Eliminar(int idProducto)
         {
+            //Obtiene el producto para eliminar y muestra la vista Eliminar
             Producto oProducto = _DBContext.Productos.Include(c => c.oCategoria).Where(p => p.IdProducto == idProducto).FirstOrDefault();
             return View(oProducto);
         }
@@ -77,6 +84,7 @@ namespace POOII_T2_SanchezLozano_Lorena.Controllers
         [HttpPost]
         public IActionResult Eliminar(Producto oProducto)
         {
+            //Elimina el producto de la bd y guarda cambios,luego retorna a la vista principal (listado)
             _DBContext.Productos.Remove(oProducto);
             _DBContext.SaveChanges();
 
@@ -87,6 +95,7 @@ namespace POOII_T2_SanchezLozano_Lorena.Controllers
 
         public IActionResult IndexCategoria()
         {
+            //Obtiene el listado de las categorías
             List<Categorium> lista = _DBContext.Categorias.ToList();
             return View(lista);
         }
@@ -95,16 +104,18 @@ namespace POOII_T2_SanchezLozano_Lorena.Controllers
         [HttpGet]
         public IActionResult Categoria_Detalle(int idCategoria)
         {
+            //Instancia de la clase CategoríaVM
             CategoriaVM categoriaVM = new CategoriaVM()
             {
                 oCategoria = new Categorium(),
+                //Se obtiene la lista de las categorías
                 ListaCategoria = _DBContext.Categorias.Select(categoria => new SelectListItem()
                 {
                     Text = categoria.NombreCate,
                     Value = categoria.IdCategoria.ToString()
                 }).ToList()
             };
-
+            //Si la categoría existe, se retorna a la vista de editar; sino a la vista para crear
             if (idCategoria != 0)
             {
                 categoriaVM.oCategoria = _DBContext.Categorias.Find(idCategoria);
@@ -116,6 +127,8 @@ namespace POOII_T2_SanchezLozano_Lorena.Controllers
         [HttpPost]
         public IActionResult Categoria_Detalle(CategoriaVM categoriaVM)
         {
+
+            //Si no se encuentra el idCategoría, se crea; en cambio, se edita
             if (categoriaVM.oCategoria.IdCategoria == 0)
             {
                 _DBContext.Categorias.Add(categoriaVM.oCategoria);
@@ -126,6 +139,7 @@ namespace POOII_T2_SanchezLozano_Lorena.Controllers
             }
 
             _DBContext.SaveChanges();
+            //Retorna a la vista de listado
 
             return RedirectToAction("IndexCategoria", "Home");
         }
@@ -133,16 +147,27 @@ namespace POOII_T2_SanchezLozano_Lorena.Controllers
         [HttpGet]
         public IActionResult EliminarCat(int idCategoria)
         {
+            //Se obtiene el registro de la categoría según su id
             Categorium categorium = _DBContext.Categorias.Where(c => c.IdCategoria == idCategoria).FirstOrDefault();
             return View(categorium);
+
         }
 
         [HttpPost]
         public IActionResult EliminarCat(Categorium categorium)
         {
-            _DBContext.Categorias.Remove(categorium);
-            _DBContext.SaveChanges();
 
+            // Para eliminar la categoría debemos obtener los productos que tienen cierta categoría
+            //para que también se eliminen ya que es una FK.
+            var productosConCategoria = _DBContext.Productos.Where(p => p.IdCategoria == categorium.IdCategoria).ToList();
+
+            // Eliminar los productos asociados
+            _DBContext.Productos.RemoveRange(productosConCategoria);
+            //Elimina la categoría
+            _DBContext.Categorias.Remove(categorium);
+            //Guarda los cambios
+            _DBContext.SaveChanges();
+            //Retorna a la vista
             return RedirectToAction("IndexCategoria", "Home");
         }
 

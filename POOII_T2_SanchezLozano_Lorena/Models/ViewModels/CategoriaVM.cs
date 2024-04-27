@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace POOII_T2_SanchezLozano_Lorena.Models.ViewModels
 {
